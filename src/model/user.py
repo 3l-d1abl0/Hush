@@ -21,5 +21,14 @@ class User:
             user = Node("User", username=self.username, password=bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt(5)))
             graph.create(user)
             return True
-        
+
         return False
+
+    def verify_password(self, password):
+
+        user = self.find_by_username()
+
+        if not user:
+            return False
+
+        return bcrypt.checkpw(password.encode('utf8'), user["password"])
