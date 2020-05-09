@@ -56,49 +56,48 @@ table{
 }
 
 .banner {
-	/*background: #7AAAC4 !important;*/
-	border: none !important;
-	border-radius: 0px !important;
-	font-family: Lato, sans-serif;
-	
+    /*background: #7AAAC4 !important;*/
+    border: none !important;
+    border-radius: 0px !important;
+    font-family: Lato, sans-serif;	
   }
   
   .navbar-nav-primary {
-	text-transform: uppercase;
+	  text-transform: uppercase;
   }
   
   .navbar-form-search {
-	position: relative;
+	  position: relative;
   }
   .navbar-form-search .form-control {
-	width: 250px;
+	  width: 250px;
   }
   .navbar-form-search .btn {
-	border: 0;
-	background: transparent;
-	font-size: 18px;
+    border: 0;
+    background: transparent;
+    font-size: 18px;
   }
   .navbar-form-search .btn:active, .navbar-form-search .btn:hover, .navbar-form-search .btn:focus {
-	color: #000;
-	outline: none;
-	box-shadow: none;
+    color: #000;
+    outline: none;
+    box-shadow: none;
   }
   .navbar-form-search .search-form-container {
-	text-align: right;
-	position: absolute;
-	width: 300px;
-	overflow: hidden;
-	background: #fff;
-	right: 60px;
-	top: 0;
-	z-index: 9;
-	transition: all .3s ease-in-out;
+    text-align: right;
+    position: absolute;
+    width: 300px;
+    overflow: hidden;
+    background: #F8F8F8;
+    right: 60px;
+    top: 0;
+    z-index: 9;
+    transition: all .3s ease-in-out;
   }
   .navbar-form-search .search-form-container.hdn {
-	width: 0;
+	  width: 0;
   }
   .navbar-form-search .search-form-container .search-input-group {
-	width: 300px;
+	  width: 300px;
   }
 
   .navbar-default .navbar-nav>li>a{
@@ -106,7 +105,7 @@ table{
   }
   
   .navbar-default .navbar-nav>li>span{
-    padding: 15px 0px;
+    padding: 15px 10px;
     display: block;
     text-transform: capitalize;
     color: #777777;
@@ -126,4 +125,16 @@ table{
   }
   .recent-posts .post-list>li:last-child{
     border-bottom: none;
+  }
+
+  @media (max-width: 767px){
+
+    .main-wrapper{
+      width: 95%;
+    }
+
+    .navbar-default .navbar-nav>li>span{
+      padding: 15px 15px;
+    }
+
   }

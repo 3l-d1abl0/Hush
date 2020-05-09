@@ -1,5 +1,5 @@
  
-(function($) {
+$(document).ready(function(){
   
     $('#search-button').on('click', function(e) {
       if($('#search-input-container').hasClass('hdn')) {
@@ -15,4 +15,4 @@
       return false;
     });
     
-  })(jQuery);
+});
