@@ -119,3 +119,11 @@ table{
     margin: 0 auto;
     padding: 20px;
   }
+
+  .recent-posts .post-list>li{
+    margin: 10px 0;
+    border-bottom: 1px solid gray;
+  }
+  .recent-posts .post-list>li:last-child{
+    border-bottom: none;
+  }

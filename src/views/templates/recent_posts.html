@@ -1,0 +1,16 @@
+<div class="recent-posts">
+
+    <h4>Recent Posts for You !</h4>
+
+    <ul class="post-list">
+        {%for row in posts %}
+            <li>
+                <b>{{row.username}} :</b>
+                <p>{{row.post.text}}</p>
+                <span>{{row.post.date}}</span>
+            </li>
+        {%else%}
+            <li>No Recent Posts</li>
+        {%endfor%}
+    </ul>
+</div>

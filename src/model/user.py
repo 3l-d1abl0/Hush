@@ -39,11 +39,31 @@ class User:
     def add_post(self, post_text):
 
         user = self.find_by_username()
+
+        if not user:
+            return False
+
         post = Node("Post", id=str(uuid.uuid4()), text=post_text, timestamp= int(datetime.now().strftime("%s")), date= datetime.now().strftime("%F"))
 
         rel = Relationship(user, "PUBLISHED", post)
         graph.create(rel)
 
-
         return True
 
+
+    def get_recent_post(self):
+
+        if not self.find_by_username():
+            return False
+        #Recent post by user
+        #query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
+
+        #Recent Post by everyone
+        query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"
+        '''
+        query = """
+        MATCH (u:User {username: {username} })-[:PUBLISHED]->(p:Post) RETURN p ORDER BY p.timestamp DESC LIMIT 10;
+        """
+        '''
+
+        return graph.run(query)

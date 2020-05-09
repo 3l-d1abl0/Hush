@@ -7,7 +7,9 @@ index = Blueprint('/', __name__)
 def welcome():
 
     if "username" in session:
-        return render_template('index/home_timeline.html', title="welcome {}".format(session["username"]))
+        user = User(session["username"])
+        posts = user.get_recent_post()
+        return render_template('index/home_timeline.html', posts=posts, title="welcome {}".format(session["username"]))
     
     return render_template('index/index.html', title="Welcome to hush")
 
