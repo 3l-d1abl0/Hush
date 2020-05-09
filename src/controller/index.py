@@ -60,7 +60,6 @@ def logout():
 
     print(session)
     session.pop("username")
-    flash("logged out !")
     return redirect(url_for("/.welcome"))
 
 @index.route('/addPost', methods=["POST"])
