@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, session
 from ..model.user import User
+import re
 
 index = Blueprint('/', __name__)
 
@@ -58,19 +59,21 @@ def login():
 @index.route('/logout')
 def logout():
 
-    print(session)
     session.pop("username")
     return redirect(url_for("/.welcome"))
 
 @index.route('/addPost', methods=["POST"])
 def addPost():
-    print("addPost")
-    print(request.form)
+    tags = []
+    post_text = request.form["user-post"]
 
+    tags += re.findall(r'[#][^\s#]+', post_text)
+    tags = set(map( lambda x: x[1:] , tags))
+    
     user = User(session["username"])
-    if not user.add_post(request.form["user-post"]):
+    if not user.add_post(request.form["user-post"], tags):
         flash('Issue While posting !')
     else:
         flash('Successfully posted !')
-        
+    
     return redirect(url_for("/.welcome"))

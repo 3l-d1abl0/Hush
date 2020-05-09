@@ -36,18 +36,24 @@ class User:
         return bcrypt.checkpw(password.encode('utf8'), user["password"])
 
 
-    def add_post(self, post_text):
+    def add_post(self, post_text, tags):
 
         user = self.find_by_username()
 
         if not user:
             return False
 
+        #Create Post
         post = Node("Post", id=str(uuid.uuid4()), text=post_text, timestamp= int(datetime.now().strftime("%s")), date= datetime.now().strftime("%F"))
-
         rel = Relationship(user, "PUBLISHED", post)
         graph.create(rel)
 
+        for tag in tags:
+            tg = Node("Tag", name=tag)
+            graph.merge(tg, "Tag", "name")
+            rel = Relationship(tg, "TAGGED", post)
+            graph.create(rel)
+            
         return True
 
 
