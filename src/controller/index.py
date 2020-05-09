@@ -54,3 +54,16 @@ def login():
 def register():
     # Do some stuff
     return render_template('index/logout.html')
+
+@index.route('/addPost', methods=["POST"])
+def addPost():
+    print("addPost")
+    print(request.form)
+
+    user = User(session["username"])
+    if not user.add_post(request.form["user-post"]):
+        flash('Issue While posting !')
+    else:
+        flash('Successfully posted !')
+        
+    return redirect(url_for("/.welcome"))

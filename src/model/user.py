@@ -1,7 +1,9 @@
 from py2neo import Graph, Node, Relationship, NodeMatcher
+from datetime import datetime
 from flask import current_app
 from .graphdb import graph
 import bcrypt
+import uuid
 
 class User:
 
@@ -32,3 +34,16 @@ class User:
             return False
 
         return bcrypt.checkpw(password.encode('utf8'), user["password"])
+
+
+    def add_post(self, post_text):
+
+        user = self.find_by_username()
+        post = Node("Post", id=str(uuid.uuid4()), text=post_text, timestamp= int(datetime.now().strftime("%s")), date= datetime.now().strftime("%F"))
+
+        rel = Relationship(user, "PUBLISHED", post)
+        graph.create(rel)
+
+
+        return True
+
