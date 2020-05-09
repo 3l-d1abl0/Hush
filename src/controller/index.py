@@ -49,13 +49,19 @@ def login():
             session["username"] = user.username
             return redirect(url_for("/.welcome"))
 
+    else:
+        if "username" in session:
+            return redirect(url_for("/.welcome"))
 
     return render_template('index/login.html', title="Log in to Hush")
 
 @index.route('/logout')
-def register():
-    # Do some stuff
-    return render_template('index/logout.html')
+def logout():
+
+    print(session)
+    session.pop("username")
+    flash("logged out !")
+    return redirect(url_for("/.welcome"))
 
 @index.route('/addPost', methods=["POST"])
 def addPost():
