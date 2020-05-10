@@ -65,11 +65,19 @@ class User:
         #Recent Post by other Users
         query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) WHERE user.username <>'%s' RETURN user.username AS username, post ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
         
-        print(query)
         #Recent post by user
         #query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
 
         #Recent Post by everyone
         #query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"
+
+        return graph.run(query)
+
+    def get_user_post(self):
+
+        if not self.find_by_username():
+            return False
+
+        query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
 
         return graph.run(query)

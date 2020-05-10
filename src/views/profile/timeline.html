@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html>
-    <head lang="en">
-        <meta charset="UTF-8">
-        <title>timeline</title>
-    </head>
-    <body>
-        {{user}}
-    </body>
-</html>
+{% extends "templates/layout.html" %}
+
+{% block body %}
+
+<div class="main-wrapper">
+    
+    <div class="form-group">
+        <h3>{{username}}</h3>
+        <hr>
+    </div>
+
+    {% include "templates/user_posts.html" %}
+    
+<div>
+{% endblock %}

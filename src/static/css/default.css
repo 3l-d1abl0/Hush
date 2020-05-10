@@ -127,6 +127,10 @@ table{
     border-bottom: none;
   }
 
+  .post-list>li>a>b{
+    color: black;
+  }
+
   @media (max-width: 767px){
 
     .main-wrapper{
