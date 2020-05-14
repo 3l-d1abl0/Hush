@@ -27,10 +27,14 @@ print(app.config['PORT'])
 
 def db_init():
     print('Creating Constraints ...')
-    #graph.run("CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE") #.evaluate()
-    #graph.run("CREATE CONSTRAINT ON (n:Post) ASSERT n.id IS UNIQUE")
-    #graph.run("CREATE CONSTRAINT ON (n:Tag) ASSERT n.name IS UNIQUE")
-    #graph.run("CREATE INDEX ON :Post(date)")
+    try:
+        graph.run("CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE") #.evaluate()
+        graph.run("CREATE CONSTRAINT ON (n:Post) ASSERT n.id IS UNIQUE")
+        graph.run("CREATE CONSTRAINT ON (n:Tag) ASSERT n.name IS UNIQUE")
+        graph.run("CREATE INDEX ON :Post(date)")
+    except Exception as e:
+        print("Error while creating Constraints !")
+        print(e)
 
 if __name__ == "__main__":
     db_init()
