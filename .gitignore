@@ -2,3 +2,5 @@ commands
 requirements.txt
 newenv
 config.py
+
+**/__pycache__/

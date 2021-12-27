@@ -5,6 +5,7 @@ from .graphdb import graph
 import bcrypt
 import uuid
 
+
 class User:
 
     def __init__(self, username):
@@ -12,16 +13,21 @@ class User:
 
     def find_by_username(self):
         matcher = NodeMatcher(graph)
-        user = matcher.match("User").where("_.username =~ '{}'".format(self.username)).limit(1).first()
+        user = matcher.match("User").where(
+            "_.username =~ '{}'".format(self.username)).limit(1).first()
         print(user)
         return user
 
     def register_user(self, password):
         print(current_app.config['SALT'])
-        #check if username exists
+        # check if username exists
         if not self.find_by_username():
-            user = Node("User", username=self.username, password=bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt(5)))
+            user = Node("User", username=self.username, password=bcrypt.hashpw(password.encode('utf8'),
+                                                                               bcrypt.gensalt(5)).decode('utf8'))
+            # try:
             graph.create(user)
+            # except Exception as e:
+            #    print("Error ", e)
             return True
 
         return False
@@ -33,8 +39,9 @@ class User:
         if not user:
             return False
 
-        return bcrypt.checkpw(password.encode('utf8'), user["password"])
-
+        print(user["password"].encode('utf8'))
+        print(password.encode('utf8'))
+        return bcrypt.checkpw(password.encode('utf8'), user["password"].encode('utf8'))
 
     def add_post(self, post_text, tags):
 
@@ -43,8 +50,9 @@ class User:
         if not user:
             return False
 
-        #Create Post
-        post = Node("Post", id=str(uuid.uuid4()), text=post_text, timestamp= int(datetime.now().strftime("%s")), date= datetime.now().strftime("%F"))
+        # Create Post
+        post = Node("Post", id=str(uuid.uuid4()), text=post_text, timestamp=int(
+            datetime.now().strftime("%s")), date=datetime.now().strftime("%F"))
         rel = Relationship(user, "PUBLISHED", post)
         graph.create(rel)
 
@@ -53,22 +61,21 @@ class User:
             graph.merge(tg, "Tag", "name")
             rel = Relationship(tg, "TAGGED", post)
             graph.create(rel)
-            
-        return True
 
+        return True
 
     def get_recent_post(self):
 
         if not self.find_by_username():
             return False
 
-        #Recent Post by other Users
-        query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) WHERE user.username <>'%s' RETURN user.username AS username, post ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
-        
-        #Recent post by user
+        # Recent Post by other Users
+        query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) WHERE user.username <>'%s' RETURN user.username AS username, post ORDER BY post.timestamp DESC LIMIT 10" % (self.username)
+
+        # Recent post by user
         #query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
 
-        #Recent Post by everyone
+        # Recent Post by everyone
         #query = "MATCH (user:User)-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"
 
         return graph.run(query)
@@ -78,6 +85,7 @@ class User:
         if not self.find_by_username():
             return False
 
-        query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10"%(self.username)
+        query = "MATCH (user:User {username: '%s' })-[:PUBLISHED]->(post:Post) RETURN post,user.username AS username ORDER BY post.timestamp DESC LIMIT 10" % (
+            self.username)
 
         return graph.run(query)
