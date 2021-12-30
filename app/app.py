@@ -11,7 +11,7 @@ app = Flask(__name__,
             template_folder='src/views')
 
 # Setup app Configs
-app.config.from_pyfile('./config/product_env.cfg')
+app.config.from_pyfile('./config/dev_env.cfg')
 
 # Register the Bluprint Routes
 app.register_blueprint(index, url_prefix='/')
