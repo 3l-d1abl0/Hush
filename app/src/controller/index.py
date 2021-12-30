@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, session
+from requests.models import Response
 from ..model.user import User
 import re
 import bcrypt
+import requests
+from flask import current_app
 
 index = Blueprint('/', __name__)
 
@@ -28,12 +31,33 @@ def signup():
         if password != password_con:
             flash("Passwords do not match !")
         else:
-            user = User(username)
-            if user.register_user(password):
-                flash("You successfully Registered !")
-                return redirect(url_for("/.login"))
-            else:
-                flash("Username already in use !")
+
+            try:
+
+                print(password)
+                print(bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt(5)).decode('utf8'))
+
+                response = requests.post(current_app.config['AUTH_SERVER']+"/auth/signup", json={
+                                         "username": username, "password": bcrypt.hashpw(password.encode('utf8'),
+                                                                               bcrypt.gensalt(5)).decode('utf8')})
+                if response.status_code == 200:
+
+                    response_data = response.json()
+                    if response_data['error'] == False:
+                        flash("You registered Successfully !")
+                        return redirect(url_for(".login"))
+                    else:
+                        print(response_data)
+                        flash("Not able to register ! Try Later !")
+
+                else:
+                    # Internal Server Error
+                    flash("Something went Wrong ! Try again !")
+
+            except requests.exceptions.RequestException as e:
+                # Service not avaiable // connection refused
+                #raise SystemExit(e)
+                flash("Something went wrong! Try Again !")
 
     return render_template('index/signup.html', title="Join hush")
 
@@ -45,14 +69,36 @@ def login():
         username = str(request.form["username"])
         password = str(request.form["password"])
 
-        user = User(username)
+        try:
+            print(password)
+            print(bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt(5)).decode('utf8'))
+            response = requests.post(current_app.config['AUTH_SERVER']+"/auth/login", json={
+                                     "username": username, "password": bcrypt.hashpw(password.encode('utf8'),
+                                                                               bcrypt.gensalt(5)).decode('utf8')})
 
-        if not user.verify_password(password):
-            flash('Please check your Password !')
-        else:
-            flash('Logged in !')
-            session["username"] = user.username
-            return redirect(url_for("/.welcome"))
+            # Successful Response
+            if response.status_code == 200:
+
+                response_data = response.json()
+                if response_data['error'] == False:
+                    flash("Logged in!")
+                    session["username"] = username
+                    session["token"] = response_data["token"]
+                    print(session)
+                    return redirect(url_for(".welcome"))
+                else:
+                    # wrong username-password
+                    print(response_data)
+                    flash("Please check you Combination ! ")
+
+            else:
+                # Internal Server Error
+                flash("Something went Wrong ! Try again !")
+
+        except requests.exceptions.RequestException as e:
+            # Service not avaiable // connection refused
+            #raise SystemExit(e)
+            flash("Something went wrong! Try Again !")
 
     else:
         if "username" in session:
