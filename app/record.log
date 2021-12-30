@@ -1,0 +1,16 @@
+2021-12-30 22:46:45,426 DEBUG neobolt MainThread : [#0000]  C: <RESOLVE> ('localhost', 7687)
+2021-12-30 22:46:45,428 DEBUG neobolt MainThread : [#0000]  C: <OPEN> ('::1', 7687, 0, 0)
+2021-12-30 22:46:45,429 DEBUG neobolt MainThread : [#A104]  C: <MAGIC> 0x6060B017
+2021-12-30 22:46:45,429 DEBUG neobolt MainThread : [#A104]  C: <HANDSHAKE> 0x00000003 0x00000002 0x00000001 0x00000000
+2021-12-30 22:46:45,430 DEBUG neobolt MainThread : [#A104]  S: <HANDSHAKE> 0x00000003
+2021-12-30 22:46:45,431 DEBUG neobolt MainThread : [#A104]  C: HELLO {'user_agent': 'neobolt/1.7.17 Python/3.9.9-final-0 (linux)', 'scheme': 'basic', 'principal': 'neo4j', 'credentials': '*******'}
+2021-12-30 22:46:45,433 DEBUG neobolt MainThread : [#A104]  S: SUCCESS {'server': 'Neo4j/4.4.2', 'connection_id': 'bolt-766', 'hints': {}}
+2021-12-30 22:46:45,433 DEBUG neobolt MainThread : [#A104]  C: RUN 'CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE' {} {}
+2021-12-30 22:46:45,434 DEBUG neobolt MainThread : [#A104]  C: PULL_ALL
+2021-12-30 22:46:45,436 DEBUG neobolt MainThread : [#A104]  S: FAILURE {'code': 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists', 'message': "An equivalent constraint already exists, 'Constraint( id=4, name='constraint_3994c9db', type='UNIQUENESS', schema=(:User {username}), ownedIndex=3 )'."}
+2021-12-30 22:46:45,437 DEBUG neobolt MainThread : [#A104]  C: RESET
+2021-12-30 22:46:45,438 DEBUG neobolt MainThread : [#A104]  S: IGNORED
+2021-12-30 22:46:45,438 DEBUG neobolt MainThread : [#A104]  S: SUCCESS {}
+2021-12-30 22:46:45,460 WARNING werkzeug MainThread :  * Debugger is active!
+2021-12-30 22:46:45,461 INFO werkzeug MainThread :  * Debugger PIN: 120-029-403
+2021-12-30 22:47:01,614 INFO werkzeug MainThread :  * Detected change in '/media/eldiablo/P3/groundzero/hush/app/app.py', reloading
