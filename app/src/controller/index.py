@@ -5,13 +5,15 @@ import re
 import bcrypt
 import requests
 from flask import current_app
+import os
+import hashlib
 
 index = Blueprint('/', __name__)
 
 
 @index.route('/')
 def welcome():
-
+    
     if "username" in session:
         user = User(session["username"])
         posts = user.get_recent_post()
@@ -34,12 +36,11 @@ def signup():
 
             try:
 
-                print(password)
-                print(bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt(5)).decode('utf8'))
+                password_wrapped = os.environ.get('PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
+                hash_object = hashlib.sha256(password_wrapped.encode('utf-8'))
 
                 response = requests.post(current_app.config['AUTH_SERVER']+"/auth/signup", json={
-                                         "username": username, "password": bcrypt.hashpw(password.encode('utf8'),
-                                                                               bcrypt.gensalt(5)).decode('utf8')})
+                                         "username": username, "password": hash_object.hexdigest()})
                 if response.status_code == 200:
 
                     response_data = response.json()
@@ -58,7 +59,7 @@ def signup():
                 # Service not avaiable // connection refused
                 #raise SystemExit(e)
                 flash("Something went wrong! Try Again !")
-
+                
     return render_template('index/signup.html', title="Join hush")
 
 
@@ -70,11 +71,11 @@ def login():
         password = str(request.form["password"])
 
         try:
-            print(password)
-            print(bcrypt.hashpw(password.encode('utf8'),bcrypt.gensalt(5)).decode('utf8'))
+            password_wrapped = os.environ.get('PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
+            hash_object = hashlib.sha256(password_wrapped.encode('utf-8'))
+            
             response = requests.post(current_app.config['AUTH_SERVER']+"/auth/login", json={
-                                     "username": username, "password": bcrypt.hashpw(password.encode('utf8'),
-                                                                               bcrypt.gensalt(5)).decode('utf8')})
+                                     "username": username, "password": hash_object.hexdigest()})
 
             # Successful Response
             if response.status_code == 200:
@@ -84,7 +85,6 @@ def login():
                     flash("Logged in!")
                     session["username"] = username
                     session["token"] = response_data["token"]
-                    print(session)
                     return redirect(url_for(".welcome"))
                 else:
                     # wrong username-password
@@ -111,6 +111,7 @@ def login():
 def logout():
 
     session.pop("username")
+    session.pop("token")
     return redirect(url_for("/.welcome"))
 
 
