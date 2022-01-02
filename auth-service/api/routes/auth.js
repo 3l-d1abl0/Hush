@@ -45,8 +45,6 @@ router.post('/login', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(req.body);
-
     const cypher = `MATCH(n:User {username: '${username}', password: '${password}' } ) RETURN n LIMIT 1`;
     neo4jSession.run(cypher)
         .then(async function (result) {
@@ -59,13 +57,10 @@ router.post('/login', (req, res, next) => {
             }
 
             const passwordComb = password + crypto.randomBytes(16).toString("hex");
-            console.log(password + ' , ' + passwordComb);
             const token = await generateToken(passwordComb);
-            console.log(password + ' => ' + token);
-            const timestamp = new Date();
-            console.log(timestamp);
 
-            redisClient.hset(token, { "username": username, "timeout": 900, "issuedAt": timestamp });
+            redisClient.hset(token, { "username": username, "timeout": 900, "issuedAt": new Date() });
+            redisClient.set(username, token);
 
             return res.status(200).json({
                 error: false,
