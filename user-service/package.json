@@ -1,0 +1,32 @@
+{
+  "name": "hush-user-service",
+  "version": "1.0.0",
+  "description": "Hush is a mini social media App.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3l-d1abl0/Hush.git"
+  },
+  "author": "3l-d1abl0",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/3l-d1abl0/Hush/issues"
+  },
+  "homepage": "https://github.com/3l-d1abl0/Hush#readme",
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "ioredis": "^4.28.2",
+    "morgan": "^1.10.0",
+    "neo4j-driver": "^4.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
