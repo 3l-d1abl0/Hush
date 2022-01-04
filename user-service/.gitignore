@@ -1,0 +1,6 @@
+comms
+node_modules/
+
+.env
+
+logs/*
