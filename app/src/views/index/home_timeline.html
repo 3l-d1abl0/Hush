@@ -9,7 +9,7 @@
         <form method="post" action="{{ url_for('/.addPost')}}">
             <label for="user-post">Just drop your thought !</label>
             <textarea class="form-control rounded-0" name="user-post" id="user-post" rows="4"></textarea>
-            <button type="submit" class="btn btn-dark btn-block btn-small">Post It!</button>
+            <button type="submit" class="post-button btn btn-dark btn-block btn-small">Post It!</button>
         </form>
 
         {% for message in get_flashed_messages() %}
