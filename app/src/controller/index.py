@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, session, Response, jsonify
 from requests.models import Response
 from ..model.user import User
+from datetime import timedelta
 import re
 import bcrypt
 import requests
@@ -15,21 +16,18 @@ index = Blueprint('/', __name__)
 def welcome():
 
     if "username" in session:
-        user = User(session["username"])
 
         try:
-            response = requests.post(current_app.config['USER_SERVER']+"/timeline", headers={
-                                     "authorization": "Bearer "+session["token"]})
+            response = requests.get(current_app.config['USER_SERVER']+"/timeline", headers={
+                "authorization": "Bearer "+session["token"]})
 
+            response_data = response.json()
             if response.status_code == 200:
 
-                response_data = response.json()
                 if response_data['error'] == False:
-                    print(response_data)
                     return render_template('index/home_timeline.html', posts=response_data["posts"], title="welcome {}".format(session["username"]))
                 else:
                     # some Issue
-                    print(response_data)
                     flash("Not able to fetch timeline ! Try Later !")
                     return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
             else:
@@ -73,7 +71,6 @@ def signup():
                         flash("You registered Successfully !")
                         return redirect(url_for(".login"))
                     else:
-                        print(response_data)
                         flash("Not able to register ! Try Later !")
 
                 else:
@@ -111,10 +108,13 @@ def login():
                     flash("Logged in!")
                     session["username"] = username
                     session["token"] = response_data["token"]
+                    session.permanent = True
+                    # set the session expiration date
+                    current_app.permanent_session_lifetime = timedelta(
+                        minutes=5)
                     return redirect(url_for(".welcome"))
                 else:
                     # wrong username-password
-                    print(response_data)
                     flash("Please check you Combination ! ")
 
             else:
@@ -171,13 +171,12 @@ def addPost():
                 return resp
             else:
                 # some Issue
-                print(response_data)
                 resp = jsonify("{'error': 'Unable to post'}")
                 resp.status_code = 500
                 return resp
         else:
             # Internal Server Error OR Unauthorized
-            resp = jsonify("{'error': response_data['message']}")
+            resp = jsonify("{'error': "+response_data['message']+"}")
             resp.status_code = response.status_code
             return resp
 
