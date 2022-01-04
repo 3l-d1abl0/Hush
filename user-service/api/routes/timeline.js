@@ -15,10 +15,14 @@ router.get('/', secured(), async (req, res, next) => {
         const usertimeline = await redisClient.lrange(`${req.authDetails['username']}#timeline`, 0, 20);
         return res.status(200).json({
             error: false,
-            posts: usertimeline
+            posts: usertimeline.map(function (post) {
+                console.log(post);
+                return JSON.parse(post);
+            })
         });
 
     } catch (error) {
+        console.log(error);
         logger.error(error);
         return res.status(500).json({
             error: true,
@@ -37,7 +41,7 @@ router.post('/addPost', secured(), (req, res, next) => {
     const timestamp = Date.now();
 
     const querytocreatePost = `MATCH(a:User {username: '${req.authDetails['username']}'})
-        CREATE(p:Post {id: '${uuid4}', text: '${post}', timestamp: '${timestamp}'})<-[:PUBLISHED]-(a)
+        CREATE(p:Post {id: '${uuid4}', text: '${post}', timestamp: '${Math.floor(timestamp / 1000)}'})<-[:PUBLISHED]-(a)
         RETURN p`;
 
 
@@ -49,7 +53,7 @@ router.post('/addPost', secured(), (req, res, next) => {
                 .then(function (followers) {
                     followers.records.forEach(async function (record) {
                         logger.info(record);
-                        const result = await redisClient.rpush(`${record._fields[0]}#timeline`, `{ post: '${post}', timestamp: ${timestamp} }`);
+                        const result = await redisClient.rpush(`${record._fields[0]}#timeline`, `{ "username": "${req.authDetails['username']}", "post": "${post}", "timestamp": ${Math.floor(timestamp / 1000)} }`);
                     });
                 })
                 .catch(function (error) {
