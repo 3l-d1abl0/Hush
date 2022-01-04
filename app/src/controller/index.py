@@ -13,11 +13,37 @@ index = Blueprint('/', __name__)
 
 @index.route('/')
 def welcome():
-    
+
     if "username" in session:
         user = User(session["username"])
         posts = user.get_recent_post()
-        return render_template('index/home_timeline.html', posts=posts, title="welcome {}".format(session["username"]))
+
+        try:
+            response = requests.post(current_app.config['USER_SERVER']+"/timeline", headers={
+                                     "authorization": "Bearer "+session["token"]})
+
+            if response.status_code == 200:
+
+                response_data = response.json()
+                if response_data['error'] == False:
+                    print(response_data)
+                    flash("You registered Successfully !")
+                    return render_template('index/home_timeline.html', posts=response_data["posts"], title="welcome {}".format(session["username"]))
+                else:
+                    # some Issue
+                    print(response_data)
+                    flash("Not able to register ! Try Later !")
+                    return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
+            else:
+                # Internal Server Error OR Unauthorized
+                flash("Not able to fetch your timeline ! Try again !")
+                return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
+
+        except requests.exceptions.RequestException as e:
+            # Service not avaiable // connection refused
+            #raise SystemExit(e)
+            flash("Something went wrong! Try Again !")
+            return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
 
     return render_template('index/index.html', title="Welcome to hush")
 
@@ -36,7 +62,8 @@ def signup():
 
             try:
 
-                password_wrapped = os.environ.get('PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
+                password_wrapped = os.environ.get(
+                    'PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
                 hash_object = hashlib.sha256(password_wrapped.encode('utf-8'))
 
                 response = requests.post(current_app.config['AUTH_SERVER']+"/auth/signup", json={
@@ -59,7 +86,7 @@ def signup():
                 # Service not avaiable // connection refused
                 #raise SystemExit(e)
                 flash("Something went wrong! Try Again !")
-                
+
     return render_template('index/signup.html', title="Join hush")
 
 
@@ -71,9 +98,10 @@ def login():
         password = str(request.form["password"])
 
         try:
-            password_wrapped = os.environ.get('PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
+            password_wrapped = os.environ.get(
+                'PASSPHRASE1')+password+os.environ.get('PASSPHRASE2')
             hash_object = hashlib.sha256(password_wrapped.encode('utf-8'))
-            
+
             response = requests.post(current_app.config['AUTH_SERVER']+"/auth/login", json={
                                      "username": username, "password": hash_object.hexdigest()})
 
