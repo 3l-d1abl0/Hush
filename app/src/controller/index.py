@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, url_for, session
+from flask import Blueprint, render_template, request, redirect, flash, url_for, session, Response, jsonify
 from requests.models import Response
 from ..model.user import User
 import re
@@ -16,7 +16,6 @@ def welcome():
 
     if "username" in session:
         user = User(session["username"])
-        posts = user.get_recent_post()
 
         try:
             response = requests.post(current_app.config['USER_SERVER']+"/timeline", headers={
@@ -27,12 +26,11 @@ def welcome():
                 response_data = response.json()
                 if response_data['error'] == False:
                     print(response_data)
-                    flash("You registered Successfully !")
                     return render_template('index/home_timeline.html', posts=response_data["posts"], title="welcome {}".format(session["username"]))
                 else:
                     # some Issue
                     print(response_data)
-                    flash("Not able to register ! Try Later !")
+                    flash("Not able to fetch timeline ! Try Later !")
                     return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
             else:
                 # Internal Server Error OR Unauthorized
@@ -41,7 +39,7 @@ def welcome():
 
         except requests.exceptions.RequestException as e:
             # Service not avaiable // connection refused
-            #raise SystemExit(e)
+            # raise SystemExit(e)
             flash("Something went wrong! Try Again !")
             return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
 
@@ -84,7 +82,7 @@ def signup():
 
             except requests.exceptions.RequestException as e:
                 # Service not avaiable // connection refused
-                #raise SystemExit(e)
+                # raise SystemExit(e)
                 flash("Something went wrong! Try Again !")
 
     return render_template('index/signup.html', title="Join hush")
@@ -125,7 +123,7 @@ def login():
 
         except requests.exceptions.RequestException as e:
             # Service not avaiable // connection refused
-            #raise SystemExit(e)
+            # raise SystemExit(e)
             flash("Something went wrong! Try Again !")
 
     else:
@@ -146,15 +144,46 @@ def logout():
 @index.route('/addPost', methods=["POST"])
 def addPost():
     tags = []
-    post_text = request.form["user-post"]
+
+    content = request.json
+    post_text = content["post"]
+    post_text = post_text.strip()
+
+    if post_text == "":
+        resp = jsonify("{'error': 'empty post'}")
+        resp.status_code = 400
+        return resp
 
     tags += re.findall(r'[#][^\s#]+', post_text)
     tags = set(map(lambda x: x[1:], tags))
+    if len(tags) == 0:
+        tags = ""
 
-    user = User(session["username"])
-    if not user.add_post(request.form["user-post"], tags):
-        flash('Issue While posting !')
-    else:
-        flash('Successfully posted !')
+    try:
+        response = requests.post(current_app.config['USER_SERVER']+"/timeline/addPost/", headers={
+            "authorization": "Bearer "+session["token"]}, json={"post": post_text, "tags": tags})
 
-    return redirect(url_for("/.welcome"))
+        response_data = response.json()
+        if response.status_code == 200:
+            if response_data['error'] == False:
+                resp = jsonify("{'message': 'created'}")
+                resp.status_code = 200
+                return resp
+            else:
+                # some Issue
+                print(response_data)
+                resp = jsonify("{'error': 'Unable to post'}")
+                resp.status_code = 500
+                return resp
+        else:
+            # Internal Server Error OR Unauthorized
+            resp = jsonify("{'error': response_data['message']}")
+            resp.status_code = response.status_code
+            return resp
+
+    except requests.exceptions.RequestException as e:
+        # Service not avaiable // connection refused
+        # raise SystemExit(e)
+        resp = jsonify("{'error': 'Internal Server Error'}")
+        resp.status_code = 500
+        return resp
