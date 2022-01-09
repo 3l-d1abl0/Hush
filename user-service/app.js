@@ -6,6 +6,7 @@ const logger = require('./config/logger');
 
 
 const timelineRoute = require('./api/routes/timeline');
+const profileRoute = require('./api/routes/profile');
 
 app.use(express.json({ limit: '3mb' }));
 app.use(
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 
 app.use('/timeline', timelineRoute);
+app.use('/profile', profileRoute);
 
 
 app.use((req, res, next) => {
