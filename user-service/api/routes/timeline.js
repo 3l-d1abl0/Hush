@@ -53,7 +53,9 @@ router.post('/addPost', secured(), (req, res, next) => {
                 .then(function (followers) {
                     followers.records.forEach(async function (record) {
                         logger.info(record);
-                        const result = await redisClient.rpush(`${record._fields[0]}#timeline`, `{ "username": "${req.authDetails['username']}", "post": "${post}", "timestamp": ${Math.floor(timestamp / 1000)} }`);
+                        let timelinePost = '{ "username":"' + req.authDetails.username +' ", "post": "' +post+ '","timestamp": ' +Math.floor(timestamp / 1000)+' }';
+                        const result = await redisClient.rpush(`${record._fields[0]}#timeline`, timelinePost);
+
                     });
                 })
                 .catch(function (error) {
