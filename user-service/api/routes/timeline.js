@@ -16,7 +16,6 @@ router.get('/', secured(), async (req, res, next) => {
         return res.status(200).json({
             error: false,
             posts: usertimeline.map(function (post) {
-                console.log(post);
                 return JSON.parse(post);
             })
         });
