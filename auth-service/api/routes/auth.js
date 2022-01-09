@@ -16,26 +16,23 @@ router.post('/signup', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
+        neo4jSession.run(`CREATE(n:User {username: '${username}', password: '${password}' } ) RETURN n`)
+            .then(function (result) {
 
-    neo4jSession.run(`CREATE(n:User {username: '${username}', password: '${password}' } ) RETURN n`)
-        .then(function (result) {
-            //console.info(result);
-            //neo4jModel.close();
+                res.status(200).json({
+                    error: false,
+                    message: "User created"
+                });
 
-            res.status(200).json({
-                error: false,
-                message: "User created"
+            })
+            .catch(function (error) {
+                logger.error('signup',error);
+
+                res.status(500).json({
+                    error: true,
+                    message: "Unable to perform"
+                });
             });
-
-        })
-        .catch(function (error) {
-            console.error(`/signup ${error}`);
-            res.status(200).json({
-                error: true,
-                message: "Unable to perform"
-            });
-        });
-
 
 });
 
@@ -50,7 +47,7 @@ router.post('/login', (req, res, next) => {
         .then(async function (result) {
 
             if (result.records.length == 0) {   //user not found with the combination
-                return res.status(200).json({
+                return res.status(401).json({
                     error: true,
                     message: "Check your Combination !"
                 });
@@ -59,8 +56,8 @@ router.post('/login', (req, res, next) => {
             const passwordComb = password + crypto.randomBytes(16).toString("hex");
             const token = await generateToken(passwordComb);
 
-            redisClient.hset(token, { "username": username, "timeout": 900, "issuedAt": new Date() });
-            redisClient.set(username, token);
+            await redisClient.hset(token, { "username": username, "timeout": 900, "issuedAt": new Date() });
+            await redisClient.set(username, token);
 
             return res.status(200).json({
                 error: false,
@@ -72,14 +69,11 @@ router.post('/login', (req, res, next) => {
 
         })
         .catch(function (error) {
-            console.error('error', `${error}`);
-
-            return res.status(200).json({
+            logger.error('login',error);
+            return res.status(500).json({
                 error: true,
                 message: "Error"
             });
-        }).finally(function (data) {
-            //neo4jSession.close();
         });
 
 });
