@@ -28,6 +28,7 @@ app.register_blueprint(profile, url_prefix='/profile')
 
 @app.template_filter('formatDatetime')
 def format_datetime(timestamp):
+    timestamp = int(timestamp)
     #date_time = datetime.fromtimestamp(timestamp)
     datetime = time.strftime('%d-%m-%Y ',
                              time.localtime(timestamp))
