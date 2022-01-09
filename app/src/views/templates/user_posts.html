@@ -5,9 +5,9 @@
     <ul class="post-list">
         {%for row in posts %}
             <li>
-                <a href="{{ url_for('profile.timeline', user_url_slug=row.username) }}"><b>{{row.username}} :</b></a>
-                <p>{{row.post.text}}</p>
-                <span>{{row.post.date}}</span>
+                <a href="{{ url_for('profile.timeline', user_url_slug=row.username) }}"><b>{{row[2]}} :</b></a>
+                <p>{{row[0]}}</p>
+                <span>{{row[1] | formatDatetime}}</span>
             </li>
         {%else%}
             <li>No Recent Posts</li>

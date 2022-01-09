@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template, session, redirect, url_for, current_app, flash
 from ..model.user import User
+import requests
 
 profile = Blueprint('profile', __name__)
 
@@ -7,17 +8,49 @@ profile = Blueprint('profile', __name__)
 def timeline(user_url_slug):
     # Do some stuff
 
-    if user_url_slug != "":
-        user = User(user_url_slug)
-        posts = user.get_user_post()
+    if "username" in session:
 
-        if session["username"] == user_url_slug:
-            timeline_header = "Your recent posts ..."
-        else:
-            timeline_header = "{}'s Recent posts ... ".format(user_url_slug)
+        user_url_slug = user_url_slug.strip()
+        print(user_url_slug)
 
-    print(posts)
-    return render_template('profile/timeline.html', header=timeline_header, posts=posts, username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+        if user_url_slug != "":
+
+            if session["username"] == user_url_slug:
+                timeline_header = "Your recent posts ..."
+            else:
+                timeline_header = "{}'s Recent posts ... ".format(user_url_slug)
+
+            try:
+                response = requests.get(current_app.config['USER_SERVER']+"/profile/"+user_url_slug, headers={
+                "authorization": "Bearer "+session["token"]})
+                
+                response_data = response.json()
+                print(response_data)
+                if response.status_code == 200:
+                    
+                    if response_data['error'] == False:
+                        return render_template('profile/timeline.html', header=timeline_header, posts=response_data['posts'], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+                    else:
+                        # some Issue
+                        flash("Not able to fetch timeline ! Try Later !")
+                        return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+                        
+                else:
+                    # Internal Server Error OR Unauthorized
+                    flash("Not able to fetch your timeline ! Try again !")
+                    return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+
+            except requests.exceptions.RequestException as e:
+                # Service not avaiable // connection refused
+                #  raise SystemExit(e)
+                flash("Something went wrong! Try Again !")
+                return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+
+        flash('User not found !')
+        return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
+
+    else:
+        return redirect(url_for("/.login"))
 
 @profile.route('/<user_url_slug>/photos')
 def photos(user_url_slug):
