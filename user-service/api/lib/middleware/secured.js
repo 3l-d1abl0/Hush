@@ -18,7 +18,7 @@ module.exports = function () {
         //get user via auth token
         try{
 
-            let authDetails = await redisClient.hgetall(authHeader);
+            var authDetails = await redisClient.hgetall(authHeader);
             
         }catch(err){
 
@@ -31,7 +31,7 @@ module.exports = function () {
             });
 
         }
-        
+
         if (Object.keys(authDetails).length === 0) {
             return res.status(403).json({
                 error: true,
