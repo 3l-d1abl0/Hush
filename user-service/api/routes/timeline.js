@@ -3,11 +3,9 @@ const router = express.Router();
 
 const logger = require('../../config/logger');
 const redisClient = require('../models/redis');
-var secured = require('../lib/middleware/secured');
+let secured = require('../lib/middleware/secured');
 const neo4jSession = require('../models/neo4j');
-
-var uuid = require('uuid');
-
+let uuid = require('uuid');
 
 router.get('/', secured(), async (req, res, next) => {
 
@@ -21,8 +19,8 @@ router.get('/', secured(), async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log(error);
-        logger.error(error);
+        console.log('/timeline', error);
+        logger.error('/timeline', error);
         return res.status(500).json({
             error: true,
             posts: 'Error in fetching timeline'
@@ -30,6 +28,7 @@ router.get('/', secured(), async (req, res, next) => {
     }
 
 });
+
 
 router.post('/addPost', secured(), (req, res, next) => {
 
@@ -50,20 +49,23 @@ router.post('/addPost', secured(), (req, res, next) => {
             const queryGetFollowers = `MATCH (u1:User{username: '${req.authDetails['username']}'})<-[r:FOLLOWS]-(u2:User) RETURN u2.username;`;
             neo4jSession.run(queryGetFollowers)
                 .then(function (followers) {
-                    followers.records.forEach(async function (record) {
-                        logger.info(record);
-                        let timelinePost = '{ "username":"' + req.authDetails.username +' ", "post": "' +post+ '","timestamp": ' +Math.floor(timestamp / 1000)+' }';
-                        const result = await redisClient.rpush(`${record._fields[0]}#timeline`, timelinePost);
 
+                    followers.records.forEach(async function (record) {
+
+                        let timelinePost = '{ "username":"' + req.authDetails.username +' ", "post": "' +post+ '","timestamp": ' +Math.floor(timestamp / 1000)+' }';
+                        await redisClient.rpush(`${record._fields[0]}#timeline`, timelinePost);
+                        
                     });
                 })
                 .catch(function (error) {
-                    logger.error(error);
+                    logger.error('/addPost', error);
+                    console.log('/addPost', error);
+                    
                     return res.status(500).json({
                         error: true,
-                        message: error
+                        message: 'Error while adding Post'
                     });
-                })
+                });
 
             return res.status(200).json({
                 error: false,
@@ -71,13 +73,16 @@ router.post('/addPost', secured(), (req, res, next) => {
             });
         })
         .catch(function (error) {
-            logger.error(error);
+            logger.error('/addPost', error);
+            console.log('/addPost', error);
+            
             return res.status(500).json({
                 error: true,
-                message: error
+                message: 'Error while adding Post'
             });
         });
 
 });
+
 
 module.exports = router;

@@ -1,7 +1,10 @@
+const logger = require('../../../config/logger');
 const redisClient = require('../../models/redis');
 
 module.exports = function () {
+
     return async function secured(req, res, next) {
+        
         //check if no auth token
         if (req.headers["authorization"] == undefined) {
             return res.status(403).json({
@@ -11,8 +14,24 @@ module.exports = function () {
         }
 
         let authHeader = req.headers["authorization"].replace("Bearer ", "");
+
         //get user via auth token
-        let authDetails = await redisClient.hgetall(authHeader);
+        try{
+
+            let authDetails = await redisClient.hgetall(authHeader);
+            
+        }catch(err){
+
+            console.log('/secured ', err);
+            logger.error('/secured', err);
+
+            return res.status(500).json({
+                error: true,
+                message: "Error connecting to Redis for Authentication"
+            });
+
+        }
+        
         if (Object.keys(authDetails).length === 0) {
             return res.status(403).json({
                 error: true,
