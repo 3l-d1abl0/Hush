@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for, session, Response, jsonify
 from requests.models import Response
-from ..model.user import User
 from datetime import timedelta
 import re
 import bcrypt

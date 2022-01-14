@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, session, redirect, url_for, current_app, flash
-from ..model.user import User
 import requests
 
 profile = Blueprint('profile', __name__)

@@ -1,6 +1,5 @@
 from flask import Flask
 from config import DevelopmentConfig
-from src.model.graphdb import graph
 
 from src.controller.profile import profile
 from src.controller.index import index
@@ -20,16 +19,20 @@ logging.basicConfig(filename='logs/app.log', level=logging.INFO,
 
 # Setup app Configs
 app.config.from_pyfile('./config/dev_env.cfg')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SALT'] = os.environ.get('SALT')
 
 # Register the Bluprint Routes
 app.register_blueprint(index, url_prefix='/')
 app.register_blueprint(profile, url_prefix='/profile')
 
+print(os.environ.get('SECRET_KEY'))
+print(os.environ.get('SALT'))
+
 
 @app.template_filter('formatDatetime')
 def format_datetime(timestamp):
     timestamp = int(timestamp)
-    #date_time = datetime.fromtimestamp(timestamp)
     datetime = time.strftime('%d-%m-%Y ',
                              time.localtime(timestamp))
     return (datetime)  # .strftime("%m/%d/%Y")
@@ -49,7 +52,6 @@ def db_init():
 
 
 if __name__ == "__main__":
-    db_init()
 
     app.logger.info('Info level log')
     app.logger.warning('Warning level log')
