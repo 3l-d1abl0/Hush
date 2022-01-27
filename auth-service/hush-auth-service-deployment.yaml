@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hush-auth-service
+spec:
+  # minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: hush-auth-service
+  replicas: 2
+  template: # template for the pods
+    metadata:
+      labels:
+        app: hush-auth-service
+    spec:
+      containers:
+      - name: hush-auth-service
+        image: lupusd3i/hush-auth-service
+        envFrom:
+          - secretRef:
+              name: hush-auth-service

@@ -1,0 +1,48 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hush-neo4j-service
+spec:
+  # minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: hush-neo4j-service
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: hush-neo4j-service
+    spec:
+      containers:
+      - name: hush-neo4j-service
+        image: neo4j:4.4
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - sh
+                - -c
+                - >
+                    echo 'CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE;' > cql-init.cql ;
+                    echo 'CREATE CONSTRAINT ON (n:Post) ASSERT n.id IS UNIQUE;' >> cql-init.cql;
+                    echo 'CREATE CONSTRAINT ON (n:Tag) ASSERT n.name IS UNIQUE;' >> cql-init.cql;
+                    echo 'CREATE INDEX ON :Post(date);' >> cql-init.cql;
+                    until cypher-shell -f cql-init.cql 1>>opt.log 2>>opt.log;
+                    do 
+                      echo $(date +"%Y-%m-%d %H-%M-%S") " unable to connect." >> opt.log;
+                      sleep 1;
+                    done;
+                    cypher-shell 'show indexes;' >> opt.log
+        #      command: ["/bin/sh", "-c", "sleep 30;","\"cypher-shell 'CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE;'\""]
+        #startupProbe:
+          #exec:
+            #command: ["/bin/sh", "-c","touch /usr/share/cql-init.cql; echo 'CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE;'>> /usr/share/cql-init.cql; cypher-shell -f /usr/share/cql-init.cql;"]
+            
+          #successThreshold: 1
+          #failureThreshold: 10
+          #periodSeconds: 30
+        envFrom:
+          - secretRef:
+              name: hush-neo4j-service
+      restartPolicy: Always

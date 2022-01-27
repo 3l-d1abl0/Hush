@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hush-auth-service
+
+spec:
+  selector:
+    app: hush-auth-service
+  ports:
+    #- name: http
+    #  port: 9090
+    #  nodePort: 30090
+  
+    #ClusterIp
+    - name: endpoint
+      port: 9090
+
+  type: NodePort
