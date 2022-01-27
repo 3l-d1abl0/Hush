@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+
+ redis-server:
+    image: "redis:6.0"
+
+    ports:
+     - "6379:6379"
+
+    command: redis-server
+
+    #volumes:
+    #  - ./redis.conf:/usr/local/etc/redis/redis.conf
+
+    #command: >
+    #  sh -c "mkdir -p /var/log/redis/ && touch /var/log/redis/redis-server.log &&
+    #         redis-server /usr/local/etc/redis/redis.conf"
