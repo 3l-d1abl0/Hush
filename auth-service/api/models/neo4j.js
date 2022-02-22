@@ -7,11 +7,4 @@ dotenv.config({
 
 const driver = neo4j.driver(process.env.NEO4JURI, neo4j.auth.basic(process.env.NEO4JUSERNAME, process.env.NEO4JPASSWORD));
 
-//specific Database
-//const session = driver.session({ database: 'some-database' });
-//const session = driver.session();
-
-//session.close();
-//driver.close();
-
 module.exports = driver.session();

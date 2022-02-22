@@ -2,7 +2,7 @@ const Redis = require('ioredis');
 const logger = require('../../config/logger');
 
     let client = new Redis({
-        host: 'localhost',
+        host: 'redis-service',
         port: 6379,
         maxRetriesPerRequest: 1,
         retryStrategy: function(times) {
