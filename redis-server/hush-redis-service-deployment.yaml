@@ -19,3 +19,11 @@ spec:
         image: redis:6.0
         ports:
         - containerPort: 6379
+        volumeMounts:
+        - name: redis-volume
+          mountPath: /data
+      volumes:
+        - name: redis-volume
+          hostPath:
+            path: /mnt/redis-data/
+            type: DirectoryOrCreate

@@ -42,7 +42,15 @@ spec:
           #successThreshold: 1
           #failureThreshold: 10
           #periodSeconds: 30
+        volumeMounts:
+          - name: hush-volume
+            mountPath: /data
         envFrom:
           - secretRef:
               name: hush-neo4j-service
+      volumes:
+        - name: hush-volume
+          hostPath:
+            path: /mnt/neo4j-data/
+            type: DirectoryOrCreate
       restartPolicy: Always
