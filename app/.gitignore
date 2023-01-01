@@ -7,3 +7,5 @@ config.py
 .env
 
 **.yml
+
+**/app.log

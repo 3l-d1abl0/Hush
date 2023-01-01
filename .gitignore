@@ -19,3 +19,5 @@ redis-server/redis.conf
  ***dump.rdb
 
  **/comms
+
+ **/package-lock.json
