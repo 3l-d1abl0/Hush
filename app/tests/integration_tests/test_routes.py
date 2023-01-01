@@ -1,10 +1,10 @@
 from flask import Flask
 from src.controller.index import index
+from src.controller.profile import profile
 import os
 from datetime import datetime
 import time
-from dotenv import load_dotenv
-from pathlib import Path
+import pytest
 
 def test_signup_page():
 
@@ -22,6 +22,7 @@ def test_signup_page():
     assert response.status_code == 200
     assert b"Register to Hush" in response.data
 
+@pytest.mark.skip(reason="Will Try to create a New User everytime its run")
 def test_successful_signup():
 
     app = Flask(__name__,
@@ -56,3 +57,19 @@ def test_successful_signup():
     assert response.status_code == 302
     assert b"Redirecting..." in response.data
     
+
+def test_signin_page():
+
+    app = Flask(__name__,
+            static_url_path='',
+            static_folder='../../src/static',
+            template_folder='../../src/views')
+
+    app.register_blueprint(index, url_prefix='/')
+
+    client = app.test_client()
+    url = '/login'
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert b"Login to Hush" in response.data
