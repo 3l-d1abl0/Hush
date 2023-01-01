@@ -1,1 +1,21 @@
 **.env
+
+**comms
+
+steps
+
+
+neo4j-server/comms
+neo4j-server/cypher_query.cql
+neo4j-server/db_setup.sh
+neo4j-server/dcp.yaml
+neo4j-server/Dockerfile
+neo4j-server/entrypoint.sh
+neo4j-server/temp.sh
+
+redis-server/redis.conf
+
+
+ ***dump.rdb
+
+ **/comms
