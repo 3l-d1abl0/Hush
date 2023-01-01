@@ -7,6 +7,7 @@ import requests
 from flask import current_app
 import os
 import hashlib
+import logging
 
 index = Blueprint('/', __name__)
 
@@ -63,6 +64,7 @@ def signup():
 
                 response = requests.post(current_app.config['AUTH_SERVER']+"/auth/signup", json={
                                          "username": username, "password": hash_object.hexdigest()})
+                                         
                 if response.status_code == 200:
 
                     response_data = response.json()
@@ -70,16 +72,20 @@ def signup():
                         flash("You registered Successfully !")
                         return redirect(url_for(".login"))
                     else:
+                        logging.error(response_data)
                         flash("Not able to register ! Try Later !")
 
                 else:
                     # Internal Server Error
+                    logging.critical(response.json())
                     flash("Something went Wrong ! Try again !")
 
             except requests.exceptions.RequestException as e:
                 # Service not avaiable // connection refused
                 # raise SystemExit(e)
+                logging.critical(e)
                 flash("Something went wrong! Try Again !")
+                
 
     return render_template('index/signup.html', title="Join hush")
 
