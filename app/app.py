@@ -1,5 +1,4 @@
 from flask import Flask
-from config import DevelopmentConfig
 
 from src.controller.profile import profile
 from src.controller.index import index
@@ -38,23 +37,10 @@ def format_datetime(timestamp):
     return (datetime)  # .strftime("%m/%d/%Y")
 
 
-def db_init():
-    print('Creating Constraints ...')
-    try:
-        # .evaluate()
-        graph.run("CREATE CONSTRAINT ON (n:User) ASSERT n.username IS UNIQUE")
-        graph.run("CREATE CONSTRAINT ON (n:Post) ASSERT n.id IS UNIQUE")
-        graph.run("CREATE CONSTRAINT ON (n:Tag) ASSERT n.name IS UNIQUE")
-        graph.run("CREATE INDEX ON :Post(date)")
-    except Exception as e:
-        print("Error while creating Constraints !")
-        print(e)
-
-
 if __name__ == "__main__":
 
     app.logger.info('Info level log')
     app.logger.warning('Warning level log')
 
     port = int(os.environ.get("PORT", app.config['PORT']))
-    app.run(port=port, debug=app.config['DEBUG'])
+    app.run(host='0.0.0.0', port=port, debug=app.config['DEBUG'])
