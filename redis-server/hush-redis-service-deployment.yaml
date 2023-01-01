@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,15 +14,14 @@ spec:
         app: hush-redis-service
     spec:
       containers:
-      - name: hush-redis-service
-        image: redis:6.0
-        ports:
-        - containerPort: 6379
-        volumeMounts:
-        - name: redis-volume
-          mountPath: /data
+        - name: hush-redis-service
+          image: redis:6.0
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-persistent-volume
+              mountPath: /data
       volumes:
-        - name: redis-volume
-          hostPath:
-            path: /mnt/redis-data/
-            type: DirectoryOrCreate
+        - name: redis-persistent-volume
+          persistentVolumeClaim:
+            claimName: redis-pvc
