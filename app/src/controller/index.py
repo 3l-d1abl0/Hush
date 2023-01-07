@@ -64,6 +64,7 @@ def signup():
 
                 response = requests.post(current_app.config['AUTH_SERVER']+"/auth/signup", json={
                                          "username": username, "password": hash_object.hexdigest()})
+                                         
                 if response.status_code == 200:
 
                     response_data = response.json()
@@ -84,6 +85,7 @@ def signup():
                 # raise SystemExit(e)
                 logging.critical(e)
                 flash("Something went wrong! Try Again !")
+                
 
     return render_template('index/signup.html', title="Join hush")
 

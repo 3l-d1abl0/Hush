@@ -21,19 +21,21 @@ app.config.from_pyfile('./config/dev_env.cfg')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SALT'] = os.environ.get('SALT')
 
-# Register the Bluprint Routes
-app.register_blueprint(index, url_prefix='/')
-app.register_blueprint(profile, url_prefix='/profile')
-
-print(os.environ.get('SECRET_KEY'))
-print(os.environ.get('SALT'))
-
 if os.environ.get('AUTH_SERVER') != "":
     app.config['AUTH_SERVER'] = os.environ.get('AUTH_SERVER')
 
 if os.environ.get('USER_SERVER') != "":
     app.config['USER_SERVER'] = os.environ.get('USER_SERVER')
 
+# Register the Bluprint Routes
+app.register_blueprint(index, url_prefix='/')
+app.register_blueprint(profile, url_prefix='/profile')
+
+if os.environ.get('AUTH_SERVER') != "":
+    app.config['AUTH_SERVER'] = os.environ.get('AUTH_SERVER')
+
+if os.environ.get('USER_SERVER') != "":
+    app.config['USER_SERVER'] = os.environ.get('USER_SERVER')
 
 @app.template_filter('formatDatetime')
 def format_datetime(timestamp):
