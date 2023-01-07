@@ -7,6 +7,7 @@ import requests
 from flask import current_app
 import os
 import hashlib
+import logging
 
 index = Blueprint('/', __name__)
 
@@ -70,15 +71,18 @@ def signup():
                         flash("You registered Successfully !")
                         return redirect(url_for(".login"))
                     else:
+                        logging.error(response_data)
                         flash("Not able to register ! Try Later !")
 
                 else:
                     # Internal Server Error
+                    logging.critical(response.json())
                     flash("Something went Wrong ! Try again !")
 
             except requests.exceptions.RequestException as e:
                 # Service not avaiable // connection refused
                 # raise SystemExit(e)
+                logging.critical(e)
                 flash("Something went wrong! Try Again !")
 
     return render_template('index/signup.html', title="Join hush")
@@ -114,15 +118,18 @@ def login():
                     return redirect(url_for(".welcome"))
                 else:
                     # wrong username-password
+                    logging.error(response_data)
                     flash("Please check you Combination ! ")
 
             else:
                 # Internal Server Error
+                logging.critical(response.json())
                 flash("Something went Wrong ! Try again !")
 
         except requests.exceptions.RequestException as e:
             # Service not avaiable // connection refused
             # raise SystemExit(e)
+            logging.critical(e)
             flash("Something went wrong! Try Again !")
 
     else:
