@@ -3,7 +3,6 @@ const router = express.Router();
 
 const logger = require('../../config/logger');
 
-const redisClient = require('../models/redis');
 const neo4jSession = require('../models/neo4j');
 
 const generateToken = require('../libs/accessToken');
@@ -38,6 +37,8 @@ router.post('/signup', (req, res, next) => {
 
 
 router.post('/login', (req, res, next) => {
+
+    const redisClient = require('../models/redis');
 
     const username = req.body.username;
     const password = req.body.password;
