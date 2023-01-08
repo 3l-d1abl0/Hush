@@ -9,7 +9,6 @@ describe('POST /signup', () => {
       //app.close();
     });
 
-
     it('should signup a user', async () => {
         
         const usernamePass = {
@@ -43,6 +42,52 @@ describe('POST /signup', () => {
         expect(response.status).toBe(500);
         expect(response.body).toHaveProperty('error', true);
         expect(response.body).toHaveProperty('message', "Unable to perform");
+      });
+
+});
+
+
+describe('POST /login', () => {
+
+    beforeEach(() => { app = require('../app'); })
+    afterEach(async () => { 
+      //app.close();
+    });
+
+
+    it('should signin a user', async () => {
+        
+        const usernamePass = {
+            "username": "TestingUser",
+            "password": "TestingPass"
+        };
+  
+        const response = await request(app)
+        .post('/auth/login')
+        .send(usernamePass)
+        .set('Accept', 'application/json');
+        
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('error', false);
+        expect(response.body).toHaveProperty('message', "Logged in successfully !");
+      });
+
+      it('should fail signin with wrong password', async () => {
+        
+        const usernamePass = {
+            "username": "TestingUser",
+            "password": "asdasdasda"
+        };
+  
+        const response = await request(app)
+        .post('/auth/login')
+        .send(usernamePass)
+        .set('Accept', 'application/json');
+        
+        expect(response.status).toBe(401);
+        expect(response.body).toHaveProperty('error', true);
+        expect(response.body).toHaveProperty('message', "Check your Combination !");
+
       });
 
 });
