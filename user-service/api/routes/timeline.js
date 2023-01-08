@@ -11,6 +11,7 @@ router.get('/', secured(), async (req, res, next) => {
 
     try {
         const usertimeline = await redisClient.lrange(`${req.authDetails['username']}#timeline`, 0, 20);
+        redisClient.end();
         return res.status(200).json({
             error: false,
             posts: usertimeline.map(function (post) {
