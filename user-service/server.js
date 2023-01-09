@@ -7,8 +7,8 @@ const port = process.env.PORT || 8000;
 const server = http.createServer(app); //pass in a listner
 
 server.on('listening', function () {
-    logger.error('Server is Running !');
-    console.log('Server is Running !');
+    logger.error(`Server is Running ${port}`);
+    console.log(`Server is Running on ${port}!`);
 }).on('error', function (err) {
     logger.error('Server Error : ', err);
 }).on('end', function(err){
