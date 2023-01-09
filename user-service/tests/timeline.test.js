@@ -27,10 +27,37 @@ describe('GET /timeline', () => {
 
         const response = await agent.get(`/timeline`)
         .set(authHeaders);
-        
+
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('error', false);
         expect(response.body["posts"].length).toBeGreaterThanOrEqual(0);
+      });
+
+
+      it('should create a Post', async () => {
+        
+        const username = "newuser";   //Fetches posts of username
+        const authToken = "$2b$10$Jd8q9ao9w//v7iycRTg2Y.f5wJAMioDDrNcl7/gwpbvDOKU89M7mK";   // make sure a valid token
+
+        var authHeaders = {"authorization": `Bearer ${authToken}`};
+
+        const usernamePass = {
+            "post": `How come people suffer? How come people part?
+            How come people struggle? How come people break your heart?
+            Break your heart?
+            Yes I wanna grow, yes I want to feel
+            Yes I wanna know, show me how to heal it up
+            Heal it up`,
+            "tags": ""          //empty for now
+        };
+
+        const response = await agent.post(`/timeline/addPost/`)
+        .set(authHeaders)
+        .send(usernamePass);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('error', false);
+        expect(response.body).toHaveProperty('message', 'Created');
       });
 
 });
