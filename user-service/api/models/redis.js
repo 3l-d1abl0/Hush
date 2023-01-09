@@ -19,7 +19,7 @@ dotenv.config({
     });
 
     client.on('error', (e) => {
-        console.log('ERRRRRR!',e);
+        
         if(e.code == 'ECONNREFUSED'){
             logger.error('ECONNREFUSED',e);
         }
