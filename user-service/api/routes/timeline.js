@@ -11,6 +11,8 @@ router.get('/', secured(), async (req, res, next) => {
 
     try {
         const usertimeline = await redisClient.lrange(`${req.authDetails['username']}#timeline`, 0, 20);
+        //redisClient.end();    //needs persistent connection
+
         return res.status(200).json({
             error: false,
             posts: usertimeline.map(function (post) {
@@ -32,14 +34,18 @@ router.get('/', secured(), async (req, res, next) => {
 
 router.post('/addPost', secured(), (req, res, next) => {
 
-    const post = req.body.post;
+
+    const StringifyPost = JSON.stringify(req.body.post);    //to escape new lines
+    const post = StringifyPost.toString().replace(/"/g, '');    //remove " added at front and back"
     const tags = req.body.tags;
 
     const uuid4 = uuid.v4();
     const timestamp = Date.now();
 
+    const stringEscapeNeo4j = post.replace(/'/g, "\\'");   //add escape character for ' for neo4j
+
     const querytocreatePost = `MATCH(a:User {username: '${req.authDetails['username']}'})
-        CREATE(p:Post {id: '${uuid4}', text: '${post}', timestamp: '${Math.floor(timestamp / 1000)}'})<-[:PUBLISHED]-(a)
+        CREATE(p:Post {id: '${uuid4}', text: '${stringEscapeNeo4j}', timestamp: '${Math.floor(timestamp / 1000)}'})<-[:PUBLISHED]-(a)
         RETURN p`;
 
 

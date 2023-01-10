@@ -19,6 +19,7 @@ module.exports = function () {
         try{
 
             var authDetails = await redisClient.hgetall(authHeader);
+            //redisClient.end();
             
         }catch(err){
 
