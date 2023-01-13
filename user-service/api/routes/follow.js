@@ -14,11 +14,17 @@ router.post('/', secured(), async (req, res, next) => {
     const username = req.authDetails.username;
 
     //Make the requesting user follow the requested 
-    const followQuery = `MATCH (u1:User{ username: '${username}'}), (u2:User{ username: '${usernameToFollow}'}) MERGE (u1)-[r:FOLLOWS]->(u2)`;
+    const followQuery = `MATCH (u1:User{ username: '${username}'}), (u2:User{ username: '${usernameToFollow}'}) MERGE (u1)-[r:FOLLOWS]->(u2) RETURN r`;
 
     try{
         let result = await neo4jSession.run(followQuery);
-        //console.log(result);
+        
+        if(result.records.length == 0){
+            return res.status(200).json({
+                error: true,
+                message: 'Cannot follow'
+            });
+        }
 
         //Fetch followed user's posts from DB
         const getUserPosts = `MATCH (user:User {username: '${usernameToFollow}' })-[:PUBLISHED]->(post:Post) RETURN post.text as text, post.timestamp as timestamp, user.username AS username ORDER BY post.timestamp DESC LIMIT 10`;
