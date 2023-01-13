@@ -20,7 +20,7 @@ describe('POST /follow', () => {
 
     it('should allow user to follow another user', async () => {
         
-        const usernametoFollow = "superuser";   //Fetches posts of username
+        const usernametoFollow = "superuser";   //valid username
         const authToken = "$2b$10$OY6Se/dSNgzYdSLvAJHRSO9hf9Ske.4XL1gP.nFW1FFLrwifrOKvO";   // make sure a valid token
 
         var authHeaders = {"authorization": `Bearer ${authToken}`};
@@ -38,9 +38,29 @@ describe('POST /follow', () => {
         expect(response.body).toHaveProperty('message', 'Followed');
     });
 
+    it('should be unable to follow already following user', async () => {
+        
+      const usernametoFollow = "superuser";   //valid username
+      const authToken = "$2b$10$OY6Se/dSNgzYdSLvAJHRSO9hf9Ske.4XL1gP.nFW1FFLrwifrOKvO";   // make sure a valid token
+
+      var authHeaders = {"authorization": `Bearer ${authToken}`};
+
+      const reqBody = {
+          "username": `${usernametoFollow}`
+      };
+
+      const response = await agent.post(`/follow`)
+      .set(authHeaders)
+      .send(reqBody);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('error', true);
+      expect(response.body).toHaveProperty('message', 'Already follows');
+    });
+
     it('should be unable to follow non-eistent users', async () => {
         
-      const usernametoFollow = "nonexistentusername";   //Fetches posts of username
+      const usernametoFollow = "nonexistentusername";   //nonexistent username
       const authToken = "$2b$10$OY6Se/dSNgzYdSLvAJHRSO9hf9Ske.4XL1gP.nFW1FFLrwifrOKvO";   // make sure a valid token
 
       var authHeaders = {"authorization": `Bearer ${authToken}`};
@@ -57,4 +77,5 @@ describe('POST /follow', () => {
       expect(response.body).toHaveProperty('error', true);
       expect(response.body).toHaveProperty('message', 'Cannot follow');
     });
+    
 });
