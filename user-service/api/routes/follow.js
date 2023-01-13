@@ -28,7 +28,7 @@ router.post('/', secured(), async (req, res, next) => {
         userPostsResponse.records.forEach( (record) => {
             const StringifyPost = JSON.stringify(record._fields[0]);    //to escape new lines
             const post = StringifyPost.toString().replace(/"/g, '');    //remove " added at front and back"
-            userPosts.push('{ "username":"' + record._fields[2] +' ", "post": "' +post+ '","timestamp": ' +record._fields[1]+' }');
+            userPosts.push('{ "username":"'+ record._fields[2] +'", "post": "' +post+ '","timestamp": ' +record._fields[1]+' }');
         });
         //console.log(userPosts);
 
