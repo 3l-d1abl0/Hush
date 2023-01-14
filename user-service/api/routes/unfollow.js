@@ -50,7 +50,7 @@ router.post('/', secured(), async (req, res, next) => {
 
             return res.status(200).json({
                 error: false,
-                message: 'unfollowed'
+                message: 'Unfollowed'
             });
 
     }catch(error){
