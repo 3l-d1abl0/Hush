@@ -29,6 +29,11 @@ describe('POST /follow', () => {
             "username": `${usernametoFollow}`
         };
 
+        //Make sure the user has unfollowed
+        const UnfollowResponse = await agent.post(`/unfollow`)
+        .set(authHeaders)
+        .send(reqBody);
+
         const response = await agent.post(`/follow`)
         .set(authHeaders)
         .send(reqBody);
