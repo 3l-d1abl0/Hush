@@ -7,6 +7,8 @@ const logger = require('./config/logger');
 
 const timelineRoute = require('./api/routes/timeline');
 const profileRoute = require('./api/routes/profile');
+const followRoute = require('./api/routes/follow');
+const unFollowRoute = require('./api/routes/unfollow');
 
 app.use(express.json({ limit: '3mb' }));
 app.use(
@@ -20,7 +22,8 @@ app.use(cookieParser());
 
 app.use('/timeline', timelineRoute);
 app.use('/profile', profileRoute);
-
+app.use('/follow', followRoute);
+app.use('/unfollow', unFollowRoute);
 
 app.use((req, res, next) => {
     const error = new Error('Not Found !');
