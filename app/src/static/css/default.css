@@ -127,6 +127,19 @@ table{
     border-bottom: none;
   }
 
+  .user-posts .post-list>li{
+    margin: 10px 0;
+    border-bottom: 1px solid gray;
+  }
+  .user-posts .post-list>li:last-child{
+    border-bottom: none;
+  }
+
+
+  .user-post{
+    white-space: pre-line;
+  }
+
   .post-list>li>a>b{
     color: black;
   }

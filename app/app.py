@@ -7,6 +7,11 @@ import logging
 from datetime import datetime
 import time
 
+def register_template_filters(app: Flask) -> None:
+    from src.filters import filter_escape_newline
+    app.register_blueprint(filter_escape_newline.blueprint)
+    return None
+
 app = Flask(__name__,
             static_url_path='',
             static_folder='src/static',
@@ -44,6 +49,7 @@ def format_datetime(timestamp):
                              time.localtime(timestamp))
     return (datetime)  # .strftime("%m/%d/%Y")
 
+register_template_filters(app)
 
 if __name__ == "__main__":
 

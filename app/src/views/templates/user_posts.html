@@ -6,7 +6,7 @@
         {%for row in posts %}
             <li>
                 <a href="{{ url_for('profile.timeline', user_url_slug=row.username) }}"><b>{{row[2]}} :</b></a>
-                <p>{{row[0]}}</p>
+                <p class="user-post">{{row[0]}}</p>
                 <span>{{row[1] | formatDatetime}}</span>
             </li>
         {%else%}
