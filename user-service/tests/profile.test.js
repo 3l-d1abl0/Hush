@@ -31,6 +31,7 @@ describe('GET /profile', () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('error', false);
         expect(response.body["posts"].length).toBeGreaterThanOrEqual(0);
+        expect(response.body).toHaveProperty('follows');
       });
 
 
