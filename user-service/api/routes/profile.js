@@ -18,8 +18,6 @@ router.get('/:username', secured(), async (req, res, next) => {
         //Check if the user Exists
         const userExistQuery = `MATCH (u:User{ username: '${username}'}) RETURN u.username`;
         let userExistQueryResult = await neo4jSession.run(userExistQuery);
-        console.log(userExistQueryResult);
-        console.log(JSON.stringify(userExistQueryResult.records, null, 4));
         if(userExistQueryResult.records.length == 0){
             return res.status(500).json({
                 error: true,
@@ -30,8 +28,6 @@ router.get('/:username', secured(), async (req, res, next) => {
         //Check if user follows the requested user
         const checkIfFollows = `MATCH (u1:User{ username: '${self}'})-[r:FOLLOWS]->(u2:User { username: '${username}'}), (u:User{ username: '${username}'}) RETURN r,u.username`;
         let checkIfFollowsResult = await neo4jSession.run(checkIfFollows);
-        console.log(checkIfFollowsResult);
-        console.log(JSON.stringify(checkIfFollowsResult.records, null, 4));
         if(checkIfFollowsResult.records.length == 1){
             ifFollows = true;
         }
