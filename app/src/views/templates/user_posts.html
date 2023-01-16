@@ -5,7 +5,7 @@
     <ul class="post-list">
         {%for row in posts %}
             <li>
-                <a href="{{ url_for('profile.timeline', user_url_slug=row.username) }}"><b>{{row[2]}} :</b></a>
+                <a href="{{ url_for('profile.timeline', user_url_slug=row[2]) }}"><b>{{row[2]}} :</b></a>
                 <p class="user-post">{{row[0]}}</p>
                 <span>{{row[1] | formatDatetime}}</span>
             </li>
