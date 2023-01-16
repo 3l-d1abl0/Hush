@@ -25,6 +25,7 @@ footer,header,hgroup,menu,nav,section{
 }
 body{
     line-height:1;
+    background-image: radial-gradient(circle, #d16ba5, #a15999, #704887, #403870, #092756);
 }
 ol,ul{
     list-style:none;
@@ -138,6 +139,10 @@ table{
 
   .user-post{
     white-space: pre-line;
+  }
+
+  #user-post{
+    margin-bottom: 5px;
   }
 
   .post-list>li>a>b{
