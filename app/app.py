@@ -3,7 +3,7 @@ from flask import Flask
 from src.controller.profile import profile
 from src.controller.index import index
 from src.controller.follow import follow
-#from src.controller.unfollow import unfollow
+from src.controller.unfollow import unfollow
 import os
 import logging
 from datetime import datetime
@@ -38,7 +38,7 @@ if os.environ.get('USER_SERVER') != "":
 app.register_blueprint(index, url_prefix='/')
 app.register_blueprint(profile, url_prefix='/profile')
 app.register_blueprint(follow, url_prefix='/follow')
-#app.register_blueprint(unfollow, url_prefix='/unfollow')
+app.register_blueprint(unfollow, url_prefix='/unfollow')
 
 if os.environ.get('AUTH_SERVER') != "":
     app.config['AUTH_SERVER'] = os.environ.get('AUTH_SERVER')
