@@ -34,6 +34,26 @@ $(document).ready(function () {
       $("#follow-button").click(function(){
         if ($("#follow-button").text() == "+ Follow"){
 
+          let username = window.location.pathname.replace('/profile/','');
+
+          $.ajax({
+
+            url: `/follow`,
+            type: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            data: JSON.stringify({ 'username': username }),
+            success: function (result) {
+              console.log(result);
+            },
+            error: function (error) {
+              errorJson = JSON.parse(error.responseJSON);
+              console.log(errorJson.error);
+              $('.flash-message').text('Unable to Post ! Try Later !');
+  
+            }
+  
+          });
+
           $("#follow-button").text("\u2713 Following");
 
         }else{
