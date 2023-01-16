@@ -8,7 +8,11 @@
         <h3>{{username}}</h3>
         {% if follow_button %}
             <p>
-                <button id="follow-button">+ Follow</button>	
+                {% if follows is sameas false %}
+                    <button id="follow-button">+ Follow</button>
+                {% else %}
+                    <button id="follow-button">	&#10003; Following</button>
+                {% endif %}
             <p>
         {% endif %}
         <hr>
