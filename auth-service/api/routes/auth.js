@@ -60,8 +60,6 @@ router.post('/login', (req, res, next) => {
             await redisClient.hset(token, { "username": username, "timeout": 900, "issuedAt": new Date() });
             await redisClient.set(username, token);
 
-            redisClient.end();
-
             return res.status(200).json({
                 error: false,
                 message: "Logged in successfully !",
