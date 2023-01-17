@@ -38,7 +38,7 @@ def followuser():
         else:
             # Internal Server Error OR Unauthorized
             logging.error(response_data)
-            resp = jsonify("{'error': "+response_data['message']+"}")
+            resp = critical("{'error': "+response_data['message']+"}")
             resp.status_code = response.status_code
             return resp
 

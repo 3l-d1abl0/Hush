@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, current_app, flash
 import requests
+import logging
 
 profile = Blueprint('profile', __name__)
 
@@ -32,17 +33,20 @@ def timeline(user_url_slug):
                         return render_template('profile/timeline.html', header=timeline_header, posts=response_data['posts'], username=user_url_slug, title="{}'s Profile".format(user_url_slug), follow_button=follow_button, follows=response_data['follows'])
                     else:
                         # some Issue
+                        logging.error(response_data)
                         flash("Not able to fetch timeline ! Try Later !")
                         return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug), follow_button=follow_button, follows=response_data['follows'])
                         
                 else:
                     # Internal Server Error OR Unauthorized
+                    logging.critical(response.json())
                     flash("Not able to fetch your timeline ! Try again !")
                     return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug), follow_button=follow_button)
 
             except requests.exceptions.RequestException as e:
                 # Service not avaiable // connection refused
                 #  raise SystemExit(e)
+                logging.critical(e)
                 flash("Something went wrong! Try Again !")
                 return render_template('profile/timeline.html', header=timeline_header, posts=[], username=user_url_slug, title="{}'s Profile".format(user_url_slug))
 

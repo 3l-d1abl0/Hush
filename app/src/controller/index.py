@@ -28,16 +28,19 @@ def welcome():
                     return render_template('index/home_timeline.html', posts=response_data["posts"], title="welcome {}".format(session["username"]))
                 else:
                     # some Issue
+                    logging.error(response_data)
                     flash("Not able to fetch timeline ! Try Later !")
                     return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
             else:
                 # Internal Server Error OR Unauthorized
+                logging.critical(response.json())
                 flash("Not able to fetch your timeline ! Try again !")
                 return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
 
         except requests.exceptions.RequestException as e:
             # Service not avaiable // connection refused
             # raise SystemExit(e)
+            logging.critical(e)
             flash("Something went wrong! Try Again !")
             return render_template('index/home_timeline.html', posts=[], title="welcome {}".format(session["username"]))
 
@@ -144,9 +147,14 @@ def login():
 @index.route('/logout')
 def logout():
 
-    session.pop("username")
-    session.pop("token")
-    return redirect(url_for("/.welcome"))
+    try:
+        session.pop("username")
+        session.pop("token")
+    except KeyError as e:
+        logging.critical(e)
+    finally:
+        return redirect(url_for("/.welcome"))
+
 
 
 @index.route('/addPost', methods=["POST"])
@@ -179,11 +187,13 @@ def addPost():
                 return resp
             else:
                 # some Issue
+                logging.error(response_data)
                 resp = jsonify("{'error': 'Unable to post'}")
                 resp.status_code = 500
                 return resp
         else:
             # Internal Server Error OR Unauthorized
+            logging.critical(response.json())
             resp = jsonify("{'error': "+response_data['message']+"}")
             resp.status_code = response.status_code
             return resp
@@ -191,6 +201,7 @@ def addPost():
     except requests.exceptions.RequestException as e:
         # Service not avaiable // connection refused
         # raise SystemExit(e)
+        logging.critical(e)
         resp = jsonify("{'error': 'Internal Server Error'}")
         resp.status_code = 500
         return resp
