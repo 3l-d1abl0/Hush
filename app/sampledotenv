@@ -2,5 +2,5 @@ PASSPHRASE1=uniquepassphrase1
 PASSPHRASE2=uniquepassphrase2
 SECRET_KEY=yoursecretkey
 SALT=yoursalt
-AUTH_SERVER="http://hush-auth-service:9090"
-USER_SERVER="http://hush-user-service:8000"
+AUTH_SERVER=http://hush-auth-service:9090
+USER_SERVER=http://hush-user-service:8000
