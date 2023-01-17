@@ -32,14 +32,14 @@ $(document).ready(function () {
 
 
       $("#follow-button").click(function(){
-
-        let username = window.location.pathname.replace('/profile/','');
+        
+        let username = decodeURIComponent(window.location.pathname).replace('/profile/','').trim();
 
         if ($("#follow-button").text() == "+ Follow"){
 
           $.ajax({
 
-            url: `/follow`,
+            url: `/follow/`,
             type: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             data: JSON.stringify({ 'username': username }),
@@ -58,7 +58,7 @@ $(document).ready(function () {
           
           $.ajax({
 
-            url: `/unfollow`,
+            url: `/unfollow/`,
             type: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
             data: JSON.stringify({ 'username': username }),
