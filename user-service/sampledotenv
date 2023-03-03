@@ -1,0 +1,6 @@
+NEO4JURI=bolt://hush-neo4j-service:7687
+NEO4JUSERNAME=neo4jusername
+NEO4JPASSWORD=neo4jpassword
+SALTROUNDS=10
+REDISURI=hush-redis-service
+REDISPORT=6379
