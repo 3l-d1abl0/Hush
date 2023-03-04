@@ -4,9 +4,6 @@ Hush is a min social media platform with minimal features.
 
 I created this just for fun and to implement my Kubernetes Learning.
 
-  
-  
-
 ## Deploying
 
 #### 1. Localhost
@@ -48,3 +45,52 @@ Visit localhost:8888
 
 
 #### 2. Using Docker
+
+Create a docker network if all services are meant tp run on the same host.
+
+```
+docker network create hush-network
+```
+
+ ##### A. Redis Setup:
+```
+	docker run --name hush-redis-service-v1 -v /opt/redis-data:/data -p 6379:6379 -d redis:6.0
+	docker network connect hush-network hush-redis-service-v1
+```
+
+ #####  B. Neo4j Setup:
+  
+```
+	docker run \
+	--name hush-neo4j-service-v1 \
+    -p7474:7474 -p7687:7687 \
+    -d \
+    -v $HOME/neo4j/data:/data \
+    -v $HOME/neo4j/logs:/logs \
+    -v $HOME/neo4j/import:/var/lib/neo4j/import \
+    -v $HOME/neo4j/plugins:/plugins \
+    --env NEO4J_AUTH=neo4j/test \
+    neo4j:4.4
+
+	docker network connect hush-network hush-neo4j-service-v1
+```
+ #####  C. User Service Setup:
+```
+    docker build -t <tag> .
+    docker run --name hush-user-service-v1 -d --env-file ./.env -p 8000:8000 <tag>
+    docker network connect hush-network hush-user-service-v1
+```
+ ##### D. Auth Service Setup:
+```
+    docker build -t <tag> .
+    docker run --name hush-auth-service-v1 -d --env-file ./.env -p 9090:9090 <tag>
+    docker network connect hush-network hush-auth-service-v1
+```
+ 
+ ##### E. Flask App Setup
+```
+    docker build -t <tag> .
+    docker run --name hush-web-app-v1 -d --env-file ./.env -p 8888:8888 <tag>
+    docker network connect hush-network hush-web-app-v1
+```
+Visit port 8888
