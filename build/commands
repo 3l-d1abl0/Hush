@@ -1,0 +1,33 @@
+cd webapp
+
+kubectl create secret generic hush-webapp --from-env-file ./.env
+kubectl create -f hush-webapp-deployment.yaml
+kubectl create -f hush-webapp-service.yaml
+
+
+cd auth-service
+
+kubectl create secret generic hush-auth-service --from-env-file ./.env
+kubectl create -f hush-auth-service-deployment.yaml
+kubectl create -f hush-auth-service-service.yaml
+
+
+cd neo4j-server
+
+kubectl create secret generic hush-neo4j-service --from-env-file ./.env
+kubectl create -f hush-neo4j-service-deployment.yaml
+kubectl create -f hush-neo4j-service.yaml
+kubectl create -f hush-neo4j-storage-aws.yaml
+
+cd redis-server
+
+kubectl create -f hush-redis-service-deployment.yaml
+kubectl create -f hush-redis-service.yaml
+kubectl create -f hush-redis-storage-aws.yaml
+
+
+cd user-service
+
+kubectl create secret generic hush-user-service --from-env-file ./.env
+kubectl create -f hush-user-service-deployment.yaml
+kubectl create -f hush-user-service.yaml

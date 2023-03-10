@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hush-redis-service
+spec:
+  # minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: hush-redis-service
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: hush-redis-service
+    spec:
+      containers:
+        - name: hush-redis-service
+          image: redis:6.0
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-persistent-volume
+              mountPath: /data
+      volumes:
+        - name: redis-persistent-volume
+          persistentVolumeClaim:
+            claimName: redis-pvc

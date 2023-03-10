@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hush-webapp
+spec:
+  # minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: hush-webapp
+  replicas: 2
+  template: # template for the pods
+    metadata:
+      labels:
+        app: hush-webapp
+    spec:
+      containers:
+      - name: hush-webapp
+        image: lupusd3i/hush-web-app:latest
+        envFrom:
+          - secretRef:
+              name: hush-webapp
